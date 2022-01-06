@@ -67,7 +67,7 @@
 	<div id="Container">
 		<div id="Left">
 			插入新KEY必须执行下面的接口：<br />
-			<button onclick="testHttp()">枚举设备列表</button>
+			<button onclick="EnumDev()">枚举设备列表</button>
 			<select id=selectEnum onchange=selected()>
 			</select>
 			<br />
@@ -238,7 +238,11 @@
 			公安对接接口(印章KEY):<br/>
 			<button onclick="SymcEncryptEX()">导出印章编码等</button>
 			-->
+			<div>
+				<button onclick="testHttp()">testHttp</button>
+			</div>
 		</div>
+
 
 		<div id="Right">
 			<div id="MessageDisplay" type="textarea">
@@ -280,7 +284,7 @@
 		var msg = '{"function":"EnumDev"}';
 		$.ajax({
 			method: 'post',
-			url: 'http://192.168.200.85/mid-admin-ms-server/api/pc-admin/v1.0/accounts/login',
+			url: 'http://127.0.0.1:7001/',
 			data: { "loginType": 1, "account": "1111", "loginPassword": "111" },
 			cache: false,
 			success: function (data) {
