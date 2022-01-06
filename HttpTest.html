@@ -285,7 +285,6 @@
 		var msg = '{"function":"EnumDev"}';
 		$.ajax({
 			method: 'get',
-			contentType: 'application/json;charset=utf-8',
 			url: 'http://127.0.0.1:7001',
 			data: { "loginType": 1, "account": "1111", "loginPassword": "111" },
 			cache: false,
@@ -300,7 +299,6 @@
 		var msg = '{"function":"EnumDev"}';
 		$.ajax({
 			method: 'get',
-			contentType: 'application/json;charset=utf-8',
 			url: 'http://localhost:7001',
 			data: { "loginType": 1, "account": "1111", "loginPassword": "111" },
 			cache: false,
