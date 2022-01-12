@@ -1,76 +1,63 @@
 ﻿<!DOCTYPE html>
 <html>
-
 <head>
-	<meta charset="utf-8">
-	<title>HTTP服务原子测试页面</title>
+    <meta charset="utf-8">
+    <title>HTTP服务原子测试页面</title>
 	<style>
 		#Container {
-			width: 100%;
-			height: 100%;
-			#margin: 50px auto;
-			/*主面板DIV居中*/
+			width:100%;
+			height:100%;
+			#margin:50px auto;/*主面板DIV居中*/
 		}
-
 		#Left {
-			float: left;
-			width: 40%;
-			height: 100%;
-			line-height: 26px;
+			float:left;
+			width:40%;
+			height:100%;
+			line-height:26px;
 		}
-
 		#Right {
-			float: right;
-			width: 55%;
-			height: 100%;
-			border-left: 1px solid black;
+			float:right;
+			width:55%;
+			height:100%;
+			border-left:1px solid black;
 			padding-left: 20px;
 		}
-
 		#MessageDisplay {
-			float: right;
-			width: 100%;
+			float:right;
+			width:100%;
 			height: 100%;
-			overflow-y: scroll;
+			overflow-y:scroll;
 		}
-
-		#selectEnum,
-		#selectFile {
-			width: 150px;
-			height: 23px;
+		#selectEnum,#selectFile {
+			width:150px;
+			height:23px;
 		}
-
-		.file,
-		.file1,
-		.fileCert {
-			width: 85px;
-			height: 25px;
-			overflow: hidden;
-		}
-
-		input {
-			width: 0;
-			height: 0;
-			font-size: 0;
-			visibility: hidden;
-		}
-
+		.file,.file1,.fileCert {
+            width: 85px;
+            height: 25px;
+            overflow: hidden;
+        }
+        input {
+            width: 0;
+            height: 0;
+            font-size: 0;
+            visibility: hidden;
+        }
 		button {
 			color: #fff;
 			background: #2d8cf0;
 			border-radius: 4px;
 		}
-	</style>
+</style>
 </head>
-
 <body>
-	<div id="Container">
-		<div id="Left">
-			插入新KEY必须执行下面的接口：<br />
+    <div id = "Container">
+		<div id = "Left">
+			插入新KEY必须执行下面的接口：<br/>
 			<button onclick="EnumDev()">枚举设备列表</button>
-			<select id=selectEnum onchange=selected()>
+			<select id = selectEnum onchange=selected()>
 			</select>
-			<br />
+			<br/>
 			<div style="height:8px"></div>
 			<!--
 			设备基本功能接口：<br/>
@@ -79,7 +66,7 @@
 			<br/>
 			-->
 			<div style="height:8px"></div>
-			PIN码管理接口：<br />
+			PIN码管理接口：<br/>
 			<button onclick="VeryfyPIN()">验证用户PIN</button>
 			<button onclick="VeryfyAdminPIN()">验证管理员PIN</button>
 			<!--
@@ -142,14 +129,14 @@
 			<br/>
 			-->
 			<div style="height:8px"></div>
-			证书相关功能接口(证书KEY)：<br />
+			证书相关功能接口(证书KEY)：<br/>
 			<button onclick="ExportPubKey()">导出签名公钥</button>
 			<button onclick="ExportPubKey2()">导出加密公钥</button>
 			<button onclick="ExportCert()">导出签名证书</button>
-			<button onclick="ExportCert2()">导出加密证书</button><br />
-
+			<button onclick="ExportCert2()">导出加密证书</button><br/>
+			
 			<div style="height:8px"></div>
-			版式盖章相关操作：<br />
+			版式盖章相关操作：<br/>
 			<button type="button" class="pdfFile">
 				打开版式文件
 				<input type="file" id="inputpdfFile" onchange="OpenLayoutFile()">
@@ -157,8 +144,8 @@
 			<script>
 				var file_btn1 = document.querySelector('.pdfFile');
 				var file_input2 = file_btn1.querySelector('#inputpdfFile');
-				file_btn1.addEventListener('click', function () {
-					file_input2.click();
+				file_btn1.addEventListener('click', function(){
+				file_input2.click();
 				});
 			</script>
 			<button onclick="DisplayTenPages()">展示前十页</button>
@@ -238,14 +225,9 @@
 			公安对接接口(印章KEY):<br/>
 			<button onclick="SymcEncryptEX()">导出印章编码等</button>
 			-->
-			<div>
-				<button onclick="testHttp()">127.0.0.1:7001</button>
-				<button onclick="localhostHttp()">localhost</button>
-			</div>
 		</div>
-
-
-		<div id="Right">
+		
+		<div id = "Right">
 			<div id="MessageDisplay" type="textarea">
 
 			</div>
@@ -258,16 +240,16 @@
 <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript">
 	window.onload = function () {
-		document.getElementById("Right").style.height = document.documentElement.clientHeight + "px";
-	}
-	WEB_SOCKET_SWF_LOCATION = "jssrc/WebSocketMain.swf";
-	var websocket = null;
-	var signPub = "";
-	var encPubData = "";
-	var devID = "";
-	var fileName = "";
-	var encEnvelopedKey = "";//加密密钥对
-	var cer = "";//编码的用户加密钥对
+        document.getElementById( "Right" ).style.height = document.documentElement.clientHeight + "px";
+    }
+    WEB_SOCKET_SWF_LOCATION = "jssrc/WebSocketMain.swf";
+    var websocket = null;
+    var signPub="";
+    var encPubData="";
+	var devID="";
+	var fileName="";
+	var encEnvelopedKey="";//加密密钥对
+	var cer="";//编码的用户加密钥对
 	var pdfFileData = "";
 	var pdfFileNmae = "";
 	var userID = "1000001030475663";
@@ -276,107 +258,81 @@
 	var sealID1 = "13040400000140";
 	var sealID2 = "44010100001080";
 	var imageData = "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";
-	//将消息显示在网页上
-	function setMessageInnerHTML(innerHTML) {
-		document.getElementById('MessageDisplay').innerHTML += innerHTML + '<br/>';
-	}
-
-	function testHttp() {
-		var msg = '{"function":"EnumDev"}';
-		$.ajax({
-			method: 'get',
-			url: 'http://127.0.0.1:7001',
-			data: { "loginType": 1, "account": "1111", "loginPassword": "111" },
-			cache: false,
-			success: function (data) {
-				console.log(data)
-			},
-			error: function (error) {
-			}
-		});
-	}
-	function localhostHttp() {
-		var msg = '{"function":"EnumDev"}';
-		$.ajax({
-			method: 'get',
-			url: 'http://localhost:7001',
-			data: { "loginType": 1, "account": "1111", "loginPassword": "111" },
-			cache: false,
-			success: function (data) {
-				console.log(data)
-			},
-			error: function (error) {
-			}
-		});
-	}
+    //将消息显示在网页上
+    function setMessageInnerHTML(innerHTML) {
+        document.getElementById('MessageDisplay').innerHTML += innerHTML + '<br/>';
+    }
 
 	//1.1.	获取设备列表
 	function EnumDev() {
 		var msg = '{"function":"EnumDev"}';
 		$.ajax({
 			method: 'post',
-			url: 'http://127.0.0.1:10080/GomainClent/EnumDev',
+			url: 'http://127.0.0.1:9999/GomainClient/EnumDev',
 			data: msg,
-			cache: false,
-			success: function (data) {
+			cache:false,
+			success:function(data){
 				setMessageInnerHTML(data);
-				if (JSON.parse(data).result == 0) {
+				if(JSON.parse(data).result == 0)
+				{
 					var selects = document.getElementById("selectEnum");
 					var count = selects.options.length;
-					for (var i = 0; i < count; i++)
+					for(var i = 0;i < count;i++)
 						selects.options.remove(i);
 					selects.options.length = 0;
 					var arrays = JSON.parse(data).devList;
-					for (var p in arrays) {
+					for(var p in arrays){
 						selects.options.add(new Option(arrays[p].devID));
 					}
 					devID = selects.options[0].value
 				}
 			},
-			error: function (error) {
+			error:function(error) {
 				setMessageInnerHTML(data);
 			}
 		});
-	}
+    }
 
 	//3.1.	KEY格式化
-	function KeyFormat() {
+    function KeyFormat()
+    {
 		var r = confirm("您确认要格式化此Ukey吗？")
-		if (r == true) {
-			var msg = '{"function":"KeyFormat","devID":"' + devID + '","flag":1}';//1当应用或容器存在时，先删除再创建；0，当应用或容器存在时，不允许删除
+		if(r== true)
+		{
+			var msg = '{"function":"KeyFormat","devID":"'+devID+'","flag":1}';//1当应用或容器存在时，先删除再创建；0，当应用或容器存在时，不允许删除
 			websocket.send(msg);
 		}
-	}
+    }
 
 	//2.1.	验证pin
-	function VeryfyPIN() {
-		var msg = '{"function":"VerifyPIN","devID":"' + devID + '","userType":1}';//2为管理员，其他默认为用户
-		$.ajax({
+	function VeryfyPIN(){
+		var msg = '{"function":"VerifyPIN","devID":"'+devID+'","userType":1}';//2为管理员，其他默认为用户
+        $.ajax({
 			method: 'post',
-			url: 'http://127.0.0.1:10080/GomainClent/VerifyPIN',
+			url: 'http://127.0.0.1:9999/GomainClient/VerifyPIN',
 			data: msg,
-			cache: false,
-			success: function (data) {
+			cache:false,
+			success:function(data){
 				setMessageInnerHTML(data);
 			},
-			error: function (error) {
+			error:function(error) {
 				setMessageInnerHTML(data);
 			}
 		});
-	}
+    }
 
 	//2.2.	验证管理员pin
-	function VeryfyAdminPIN() {
-		var msg = '{"function":"VerifyPIN","devID":"' + devID + '","userType":2}';//2为管理员，其他默认为用户
-		$.ajax({
+	function VeryfyAdminPIN(){
+		var msg = '{"function":"VerifyPIN","devID":"'+devID+'","userType":2}';//2为管理员，其他默认为用户
+        $.ajax({
 			method: 'post',
-			url: 'http://127.0.0.1:10080/GomainClent/VerifyPIN',
+			url: 'http://127.0.0.1:9999/GomainClient/VerifyPIN',
 			data: msg,
-			cache: false,
-			success: function (data) {
+			cache:false,
+			success:function(data){
 				setMessageInnerHTML(data);
 			},
-			error: function (error) {
+			error:function(error) {
 				setMessageInnerHTML(data);
 			}
 		});
@@ -384,613 +340,653 @@
 
 	//2.3.	重置用户PIN
 	function ModifyPIN() {
-		var msg = '{"function":"ChangePINEX","devID":"' + devID + '","userType":1,"flag":0}';//2为管理员，其他默认为用户
-		websocket.send(msg);
-	}
+		var msg = '{"function":"ChangePINEX","devID":"'+devID+'","userType":1,"flag":0}';//2为管理员，其他默认为用户
+        websocket.send(msg);
+    }
 	//2.3.	修改用户PIN
 	function ModifyUserPIN() {
-		var msg = '{"function":"ChangePINEX","devID":"' + devID + '","userType":1,"flag":1}';//2为管理员，其他默认为用户
-		websocket.send(msg);
-	}
-	//2.3.	修改管理员PIN
+		var msg = '{"function":"ChangePINEX","devID":"'+devID+'","userType":1,"flag":1}';//2为管理员，其他默认为用户
+        websocket.send(msg);
+    }
+    //2.3.	修改管理员PIN
 	function ModifyAdminPIN() {
-		var msg = '{"function":"ChangePINEX","devID":"' + devID + '","userType":2,"flag":1}';//2为管理员，其他默认为用户
-		websocket.send(msg);
-	}
-	//解锁用户PIN
-	function UnlockPIN() {
-		var msg = '{"function":"ChangePINEX","devID":"' + devID + '","userType":2,"flag":3}';//2为管理员，其他默认为用户
-		websocket.send(msg);
-	}
-
+		var msg = '{"function":"ChangePINEX","devID":"'+devID+'","userType":2,"flag":1}';//2为管理员，其他默认为用户
+        websocket.send(msg);
+    }
+    //解锁用户PIN
+    function UnlockPIN() {
+		var msg = '{"function":"ChangePINEX","devID":"'+devID+'","userType":2,"flag":3}';//2为管理员，其他默认为用户
+        websocket.send(msg);
+    }
+    
 	//5.3.	导出签名公钥
 	function ExportPubKey() {
-		var msg = '{"function":"ExportPubKey","devID":"' + devID + '","pubkeyType":1}';	////1是签名，2是加密
-		$.ajax({
+		var msg = '{"function":"ExportPubKey","devID":"'+devID+'","pubkeyType":1}';	////1是签名，2是加密
+        $.ajax({
 			method: 'post',
-			url: 'http://127.0.0.1:10080/GomainClent/ExportPubKey',
+			url: 'http://127.0.0.1:9999/GomainClient/ExportPubKey',
 			data: msg,
-			cache: false,
-			success: function (data) {
+			cache:false,
+			success:function(data){
 				setMessageInnerHTML(data);
 			},
-			error: function (error) {
+			error:function(error) {
 				setMessageInnerHTML(data);
 			}
 		});
-	}
-
+    }
+			
 	//5.3.	导出加密公钥
 	function ExportPubKey2() {
-		var msg = '{"function":"ExportPubKey","devID":"' + devID + '","pubkeyType":2}';
-		$.ajax({
+		var msg = '{"function":"ExportPubKey","devID":"'+devID+'","pubkeyType":2}';
+        $.ajax({
 			method: 'post',
-			url: 'http://127.0.0.1:10080/GomainClent/ExportPubKey',
+			url: 'http://127.0.0.1:9999/GomainClient/ExportPubKey',
 			data: msg,
-			cache: false,
-			success: function (data) {
+			cache:false,
+			success:function(data){
 				setMessageInnerHTML(data);
 			},
-			error: function (error) {
+			error:function(error) {
 				setMessageInnerHTML(data);
 			}
 		});
-	}
+    }
 
 	//7.1.	导出签名数字证书
-	function ExportCert() {
-		var msg = '{"function":"ExportCert","devID":"' + devID + '","certType":1}';	//1是签名，2是加密
-		$.ajax({
+    function ExportCert() {
+		var msg = '{"function":"ExportCert","devID":"'+devID+'","certType":1}';	//1是签名，2是加密
+        $.ajax({
 			method: 'post',
-			url: 'http://127.0.0.1:10080/GomainClent/ReadUkeyCert',
+			url: 'http://127.0.0.1:9999/GomainClient/ReadUkeyCert',
 			data: msg,
-			cache: false,
-			success: function (data) {
+			cache:false,
+			success:function(data){
 				setMessageInnerHTML(data);
-				if (JSON.parse(data).result == 0) {
+				if(JSON.parse(data).result == 0)
+				{
 					certData = JSON.parse(data).cert;
 				}
 			},
-			error: function (error) {
+			error:function(error) {
 				setMessageInnerHTML(data);
 			}
 		});
-	}
+    }
 
 	//7.1.	导出加密数字证书
-	function ExportCert2() {
-		var msg = '{"function":"ExportCert","devID":"' + devID + '","certType":2}';
-		$.ajax({
+    function ExportCert2() {
+		var msg = '{"function":"ExportCert","devID":"'+devID+'","certType":2}';
+        $.ajax({
 			method: 'post',
-			url: 'http://127.0.0.1:10080/GomainClent/ReadUkeyCert',
+			url: 'http://127.0.0.1:9999/GomainClient/ReadUkeyCert',
 			data: msg,
-			cache: false,
-			success: function (data) {
+			cache:false,
+			success:function(data){
 				setMessageInnerHTML(data);
 			},
-			error: function (error) {
+			error:function(error) {
 				setMessageInnerHTML(data);
 			}
 		});
-	}
+    }
 	//
-	function ExportCertPubKey() {
+	function ExportCertPubKey(){
 		var inputElement = document.getElementById("inputCert");
 		var file = inputElement.files[0];
 		var fileArr = file.name.split(".");
 		var reader = new FileReader();
-		//以二进制形式读取文件
-		reader.readAsText(file);
-		var certText = "";
-		//文件读取完毕后该函数响应
-		reader.onload = function loaded(evt) {
+        //以二进制形式读取文件
+        reader.readAsText(file);
+		var certText="";
+        //文件读取完毕后该函数响应
+        reader.onload = function loaded(evt) {
 			certText = evt.target.result;
-			var msg = '{"function":"GetCertPubKey","cert":"' + certText + '"}';
+			var msg = '{"function":"GetCertPubKey","cert":"'+certText+'"}';
 			websocket.send(msg);
-			websocket.onmessage = function (event) {
+			websocket.onmessage = function (event){
 				setMessageInnerHTML(event.data);
 			}
-		}
+	    }
 	}
 
 	//5.1.	产生随机数
 	function generateRand() {
-		var msg = '{"function":"GenRandom","devID":"' + devID + '","randLen":16}';
-		websocket.send(msg);
-		websocket.onmessage = function (event) {
+		var msg = '{"function":"GenRandom","devID":"'+devID+'","randLen":16}';
+        websocket.send(msg);
+		websocket.onmessage = function (event)
+		{	
 			setMessageInnerHTML(event.data);
 		}
-	}
+    }
 
 	//7.4.	导出签名证书序列号扩展
-	function GetCertSNEx() {
-		var msg = '{"function":"GetCertSNEX","devID":"' + devID + '","certType":1}';//1是签名，2是加密
-		websocket.send(msg);
-	}
+    function GetCertSNEx() {
+		var msg = '{"function":"GetCertSNEX","devID":"'+devID+'","certType":1}';//1是签名，2是加密
+        websocket.send(msg);
+    }
 
 	//7.4.	导出签名证书序列号扩展
-	function GetCertSNEx2() {
-		var msg = '{"function":"GetCertSNEX","devID":"' + devID + '","certType":2}';
-		websocket.send(msg);
-	}
+    function GetCertSNEx2() {
+		var msg = '{"function":"GetCertSNEX","devID":"'+devID+'","certType":2}';
+        websocket.send(msg);
+    }
 	//7.8.	获取签名证书主题扩展
-	function GetCertSubjectEx() {
-		var msg = '{"function":"GetCertSubjectEX","devID":"' + devID + '","certType":1}';	//1是签名，2是加密
-		websocket.send(msg);
-	}
+    function GetCertSubjectEx() {
+		var msg = '{"function":"GetCertSubjectEX","devID":"'+devID+'","certType":1}';	//1是签名，2是加密
+        websocket.send(msg);
+    }
 
 	//7.8.	获取加密证书主题扩展
-	function GetCertSubjectEx2() {
-		var msg = '{"function":"GetCertSubjectEX","devID":"' + devID + '","certType":2}';
-		websocket.send(msg);
-	}
+    function GetCertSubjectEx2() {
+		var msg = '{"function":"GetCertSubjectEX","devID":"'+devID+'","certType":2}';
+        websocket.send(msg);
+    }
 
 	//3.2.	生成签名密钥对
 	function GenEncMastPairKey() {
-		var msg = '{"function":"GenECCKeyPair","devID":"' + devID + '"}';
-		websocket.send(msg);
-	}
+		var msg = '{"function":"GenECCKeyPair","devID":"'+devID+'"}';
+        websocket.send(msg);
+    }
 
 	//3.3.	导入用户加密密钥对
-	function ImportECCKeyPair() {
+	function ImportECCKeyPair(){
 		var inputElement = document.getElementById("inputencPair");
-		var file = inputElement.files[0];
-		var fileArr = file.name.split(".");
-		var reader = new FileReader();
-		//以二进制形式读取文件
-		reader.readAsText(file);
-		var encPair = "";
-		//文件读取完毕后该函数响应
-		reader.onload = function loaded(evt) {
-			encPair = evt.target.result;
-			var msg = '{"function":"ImportECCKeyPair","devID":"' + devID + '","encEnvelopedKey":"' + encPair + '"}';
-			websocket.send(msg);
-			websocket.onmessage = function (event) {
-				setMessageInnerHTML(event.data);
-			}
-		}
+    var file = inputElement.files[0];
+    var fileArr = file.name.split(".");
+    var reader = new FileReader();
+        //以二进制形式读取文件
+        reader.readAsText(file);
+        var encPair="";
+        //文件读取完毕后该函数响应
+          reader.onload = function loaded(evt) {
+          encPair = evt.target.result;  
+          var msg = '{"function":"ImportECCKeyPair","devID":"'+devID+'","encEnvelopedKey":"'+encPair+'"}';
+					websocket.send(msg);
+					websocket.onmessage = function (event){
+							setMessageInnerHTML(event.data);
+							}
+        }
 	}
 
-	function ImportKeyPair2() {
-
-		var msg = '{"function":"ExportPubKey","devID":"' + devID + '","pubkeyType":1}';	//1是签名，2是加密
-		websocket.send(msg);
-		websocket.onmessage = function (event) {
-			//alert("导出公钥");
-			setMessageInnerHTML(event.data);
-			if (JSON.parse(event.data).result == 0) {
-				var mPubKey = JSON.parse(event.data).publicKey;
-				//导入固定密钥对
-				msg = '{"function":"PackECCKeyPair","pubKey":"' + mPubKey + '","devID":"' + devID + '"}';
-				websocket.send(msg);
-				websocket.onmessage = function (event1) {
-					setMessageInnerHTML(event1.data);
-					if (JSON.parse(event1.data).result == 0) {
-						var envelopePair = JSON.parse(event1.data).packData;
-						// alert("导入固定密钥对");
-						msg = '{"function":"ImportECCKeyPair","devID":"' + devID + '","encEnvelopedKey":"' + envelopePair + '"}';
-						websocket.send(msg);
-						websocket.onmessage = function (event2) {
-							setMessageInnerHTML(event2.data);
-						}
-					}
-
-				}
-
-			}
-
+function ImportKeyPair2(){
+	
+	    var msg = '{"function":"ExportPubKey","devID":"'+devID+'","pubkeyType":1}';	//1是签名，2是加密
+		  websocket.send(msg);
+      websocket.onmessage = function (event)
+      {
+      	   //alert("导出公钥");
+						setMessageInnerHTML(event.data);
+						if(JSON.parse(event.data).result==0)
+						{
+								var mPubKey = JSON.parse(event.data).publicKey;
+								//导入固定密钥对
+								msg = '{"function":"PackECCKeyPair","pubKey":"'+mPubKey+'","devID":"'+devID+'"}';
+						    websocket.send(msg);
+								websocket.onmessage = function (event1)
+								{
+									setMessageInnerHTML(event1.data);
+									if(JSON.parse(event1.data).result==0)
+									{
+								      var envelopePair = JSON.parse(event1.data).packData;
+								      // alert("导入固定密钥对");
+								       msg = '{"function":"ImportECCKeyPair","devID":"'+devID+'","encEnvelopedKey":"'+envelopePair+'"}';
+									     websocket.send(msg);
+								       websocket.onmessage = function (event2)
+											{
+												setMessageInnerHTML(event2.data);
+											}
+								  }
+								
+							}
+							
+					 }
+	
 		}
-	}
+}
 
 	//3.4.	导入签名数字证书
-	function ImportECCCert() {
+	function  ImportECCCert(){
 		var inputElement = document.getElementById("inputCertSign");
 		var file = inputElement.files[0];
 		var fileArr = file.name.split(".");
 		var reader = new FileReader();
-		//以二进制形式读取文件
-		reader.readAsText(file);
-		var certSign = "";
-		//文件读取完毕后该函数响应
-		reader.onload = function loaded(evt) {
+        //以二进制形式读取文件
+        reader.readAsText(file);
+		var certSign="";
+        //文件读取完毕后该函数响应
+        reader.onload = function loaded(evt) {
 			certSign = evt.target.result;
-			var msg = '{"function":"ImportECCCert","devID":"' + devID + '","certType":1,"cert":"' + certSign + '"}';//certType 证书类型，1是签名，2是加密
+			var msg = '{"function":"ImportECCCert","devID":"'+devID+'","certType":1,"cert":"'+certSign+'"}';//certType 证书类型，1是签名，2是加密
 			websocket.send(msg);
-			websocket.onmessage = function (event) {
+			websocket.onmessage = function (event){
 				setMessageInnerHTML(event.data);
 			}
-		}
+	    }
 	}
-
+	
 	//3.5.	导入加密数字证书
-	function ImportEncryptCert() {
+	function  ImportEncryptCert(){
 		var inputElement = document.getElementById("inputCertEncryt");
 		var file = inputElement.files[0];
 		var fileArr = file.name.split(".");
 		var reader = new FileReader();
-		//以二进制形式读取文件
-		reader.readAsText(file);
-		var certEncrypt = "";
-		//文件读取完毕后该函数响应
-		reader.onload = function loaded(evt) {
+        //以二进制形式读取文件
+        reader.readAsText(file);
+		var certEncrypt="";
+        //文件读取完毕后该函数响应
+        reader.onload = function loaded(evt) {
 			certEncrypt = evt.target.result;
-			var msg = '{"function":"ImportECCCert","devID":"' + devID + '","certType":2,"cert":"' + certEncrypt + '"}';//certType 证书类型，1是签名，2是加密
+			var msg = '{"function":"ImportECCCert","devID":"'+devID+'","certType":2,"cert":"'+certEncrypt+'"}';//certType 证书类型，1是签名，2是加密
 			websocket.send(msg);
-			websocket.onmessage = function (event) {
+			websocket.onmessage = function (event){
 				setMessageInnerHTML(event.data);
 			}
-		}
+	    }
 	}
 
 	//5.2.	数据摘要
 	function Digest() {
 		var msg = '{"function":"SM3Digest","indata":"1234567890abcd清明上河图" }';
-		websocket.send(msg);
-		websocket.onmessage = function (event) {
+        websocket.send(msg);
+		websocket.onmessage = function (event)
+		{	
 			setMessageInnerHTML(event.data);
 		}
-	}
+    }
 
-	//4.1.	枚举文件
+    //4.1.	枚举文件
 	function EnumFiles() {
-		var msg = '{"function":"EnumFiles","devID":"' + devID + '"}';
-		websocket.send(msg);
-		websocket.onmessage = function (event) {
+		var msg = '{"function":"EnumFiles","devID":"'+devID+'"}';
+        websocket.send(msg);
+		websocket.onmessage = function (event)
+		{	
 			setMessageInnerHTML(event.data);
 			var selects = document.getElementById("selectFile");
 			var count = selects.options.length;
-
-			for (var i = 0; i < count; i++) {
+				
+			for(var i = 0;i < count;i++){
 				selects.options.remove(i);
 			}
-			selects.options.length = 0;
-			if (JSON.parse(event.data).result == 0) {
+				selects.options.length=0;
+			if(JSON.parse(event.data).result == 0)
+			{
 				var files = JSON.parse(event.data).filesName;
 				var arrays = files.split(" ");
-
-				for (var p in arrays) {
-					if (arrays[p].length > 0)
+				
+				for(var p in arrays){
+					if(arrays[p].length > 0)
 						selects.options.add(new Option(arrays[p]));
 				}
 				fileName = selects.options[0].value
 			}
 		}
-	}
+    }
 
 	//4.2.	读文件
-	function ReadFile() {
-		var msg = '{"function":"ReadFile","devID":"' + devID + '","fileName":"' + fileName + '"}';
-		websocket.send(msg);
-		websocket.onmessage = function (event) {
+    function ReadFile(){
+	    var msg = '{"function":"ReadFile","devID":"'+devID+'","fileName":"'+fileName+'"}';
+        websocket.send(msg);
+		websocket.onmessage = function (event){
 			setMessageInnerHTML(event.data);
 		}
-	}
+    }
 
-	function DeleteFile() {
-		var msg = '{"function":"DeleteFile","devID":"' + devID + '", "fileName":"' + fileName + '"}';
-		websocket.send(msg);
-		websocket.onmessage = function (event) {
+ 	function DeleteFile(){
+	    var msg = '{"function":"DeleteFile","devID":"'+devID+'", "fileName":"'+fileName+'"}';
+        websocket.send(msg);
+		websocket.onmessage = function (event)
+		{
 			setMessageInnerHTML(event.data);
-			if (JSON.parse(event.data).result == 0) {
+			if(JSON.parse(event.data).result == 0){
 				var selects = document.getElementById("selectFile");
 				selects.options.remove(selects.selectedIndex);
 			}
 		}
-	}
+    }
 
 	//4.3.	写文件
-	function WriteFile() {
+    function WriteFile(){
 		var inputElement = document.getElementById("inputFile");
 		var file = inputElement.files[0];
 		var fileArr = file.name.split(".");
 		var writeFileName = fileArr[0];
 		var reader = new FileReader();
-		//以二进制形式读取文件
-		reader.readAsText(file);
-		var writeText1 = "";
-		//文件读取完毕后该函数响应
-		reader.onload = function loaded(evt) {
+        //以二进制形式读取文件
+        reader.readAsText(file);
+		var writeText1="";
+        //文件读取完毕后该函数响应
+        reader.onload = function loaded(evt) {
 			writeText = evt.target.result;
-			var msg = '{"function":"WriteFile","devID":"' + devID + '","fileName":"' + writeFileName + '","fileData":"' + writeText + '"}';
+			var msg = '{"function":"WriteFile","devID":"'+devID+'","fileName":"'+writeFileName+'","fileData":"'+writeText+'"}';
 			websocket.send(msg);
-			websocket.onmessage = function (event) {
+			websocket.onmessage = function (event){
 				setMessageInnerHTML(event.data);
 			}
-		}
-	}
+	    }
+    }
 
 	//4.4.	写公安数据文件
-	function WriteGonganFile() {
+	function WriteGonganFile(){
 		var inputElement = document.getElementById("inputGonganFile");
 		var file = inputElement.files[0];
 		var fileArr = file.name.split(".");
 		var writeFileName = fileArr[0];
 		var reader = new FileReader();
-		//以二进制形式读取文件
-		reader.readAsText(file);
-		var writeText = "";
-		//文件读取完毕后该函数响应
-		reader.onload = function loaded(evt) {
+        //以二进制形式读取文件
+        reader.readAsText(file);
+		var writeText="";
+        //文件读取完毕后该函数响应
+        reader.onload = function loaded(evt) {
 			writeText = evt.target.result;
-			var msg = '{"function":"WriteFile","devID":"' + devID + '","fileName":"' + writeFileName + '","fileData":"' + writeText + '","fileRight":1}';
+			var msg = '{"function":"WriteFile","devID":"'+devID+'","fileName":"'+writeFileName+'","fileData":"'+writeText+'","fileRight":1}';
 			websocket.send(msg);
-			websocket.onmessage = function (event) {
+			websocket.onmessage = function (event){
 				setMessageInnerHTML(event.data);
 			}
-		}
+	    }
 	}
 	//打开版式文件，base64编码
-	function OpenLayoutFile() {
+	function OpenLayoutFile(){
 		var inputElement = document.getElementById("inputpdfFile");
 		var file = inputElement.files[0];
 		var reader = new FileReader();
-		//以二进制形式读取文件
-		reader.readAsText(file);
+        //以二进制形式读取文件
+        reader.readAsText(file);
 		setMessageInnerHTML(file.name);
 		pdfFileName = file.name;
-		var data = '';
-		//文件读取完毕后该函数响应
-		reader.onload = function loaded(evt) {
+		var data='';
+        //文件读取完毕后该函数响应
+        reader.onload = function loaded(evt) {
 			pdfFileData = evt.target.result;
 			//pdfFileData = window.btoa(data);
-		}
+	    }
 	}
-
+	
 	//展示前十页页面
-	function DisplayTenPages() {
-		var msg = '{"function":"ShowDoc","fileName":"' + pdfFileName + '","fileData":"' + pdfFileData + '","pageStrart":0,"pageCount":10}';	////1是签名，2是加密
+	function DisplayTenPages(){
+		var msg = '{"function":"ShowDoc","fileName":"'+pdfFileName+'","fileData":"'+pdfFileData+'","pageStrart":0,"pageCount":10}';	////1是签名，2是加密
 		$.ajax({
 			method: 'post',
-			url: 'http://127.0.0.1:10080/GomainClent/ShowDoc',
+			url: 'http://127.0.0.1:9999/GomainClient/ShowDoc',
 			data: msg,
-			cache: false,
-			success: function (data) {
-				if (JSON.parse(data).result == 0) {
+			cache:false,
+			success:function(data){
+				if(JSON.parse(data).result == 0){
 					fileID = JSON.parse(data).fileID;
 					setMessageInnerHTML("DisplayTenPages 成功");
 				}
 			},
-			error: function (error) {
+			error:function(error) {
 				setMessageInnerHTML(data);
 			}
 		});
 	}
 	//展示后续十页
-	function DisplayAfterTenPages() {
-		var msg = '{"function":"ShowDocCon","fileName":"' + pdfFileName + '","fileID":"' + fileID + '","pageStrart":1,"pageCount":34}';	////1是签名，2是加密
+	function DisplayAfterTenPages(){
+		var msg = '{"function":"ShowDocCon","fileName":"'+pdfFileName+'","fileID":"'+fileID+'","pageStrart":1,"pageCount":34}';	////1是签名，2是加密
 		$.ajax({
 			method: 'post',
-			url: 'http://127.0.0.1:10080/GomainClent/ShowDocCon',
+			url: 'http://127.0.0.1:9999/GomainClient/ShowDocCon',
 			data: msg,
-			cache: false,
-			success: function (data) {
-				if (JSON.parse(data).result == 0) {
-
+			cache:false,
+			success:function(data){
+				if(JSON.parse(data).result == 0){
+					
 					setMessageInnerHTML("DisplayAfterTenPages() 成功");
 				}
 			},
-			error: function (error) {
+			error:function(error) {
 				setMessageInnerHTML(data);
 			}
 		});
 	}
 	//获取用户印章列表
-	function GetUserList() {
-		var msg = '{"function":"GetUserSealList","cert":"' + certData + '"}';
+	function GetUserList(){
+		var msg = '{"function":"GetUserSealList","cert":"'+certData+'"}';
 		$.ajax({
 			method: 'post',
-			url: 'http://127.0.0.1:10080/GomainClent/GetUserSealList',
+			url: 'http://127.0.0.1:9999/GomainClient/GetUserSealList',
 			data: msg,
-			cache: false,
-			success: function (data) {
+			cache:false,
+			success:function(data){
 				setMessageInnerHTML(data);
 			},
-			error: function (error) {
+			error:function(error) {
 				setMessageInnerHTML(data);
 			}
 		});
 	}
 	//加盖普通章
-	function AddCommonSignatures() {
-		var msg = '{"function":"AddCommonSignatures","fileName":"' + pdfFileName + '","fileID":"' + fileID + '","cert":"' + certData + '","outFileType":0,"sealList":[{"sealID":"' + sealID1 + '","sealImage":"' + imageData + '","imageWidth":40,"imageHeight":40,"SealInfo":[{"pageIndex":0,"x":0.1,"y":0.1},{"pageIndex":1,"x":0.5,"y":0.5}]},{"sealID":"' + sealID2 + '","sealImage":"' + imageData + '","imageWidth":40,"imageHeight":40,"SealInfo":[{"pageIndex":2,"x":0.9,"y":0.9},{"pageIndex":4,"x":0.8,"y":0.8}]}]}'
+	function AddCommonSignatures(){
+		var msg = '{"function":"AddCommonSignatures","fileName":"'+pdfFileName+'","fileID":"'+fileID+'","cert":"'+certData+'","outFileType":0,"sealList":[{"sealID":"'+sealID1+'","sealImage":"'+imageData+'","imageWidth":40,"imageHeight":40,"SealInfo":[{"pageIndex":0,"x":0.1,"y":0.1},{"pageIndex":1,"x":0.5,"y":0.5}]},{"sealID":"'+sealID2+'","sealImage":"'+imageData+'","imageWidth":40,"imageHeight":40,"SealInfo":[{"pageIndex":2,"x":0.9,"y":0.9},{"pageIndex":4,"x":0.8,"y":0.8}]}]}'
 		$.ajax({
 			method: 'post',
-			url: 'http://127.0.0.1:10080/GomainClent/AddCommonSignatures',
+			url: 'http://127.0.0.1:9999/GomainClient/AddCommonSignatures',
 			data: msg,
-			cache: false,
-			success: function (data) {
+			cache:false,
+			success:function(data){
 				setMessageInnerHTML(data);
 			},
-			error: function (error) {
+			error:function(error) {
 				setMessageInnerHTML(data);
 			}
 		});
 	}
-	function AddCrossSignatures() {
-		var msg = '{"function":"AddCrossSignature","fileName":"' + pdfFileName + '","fileID":"' + fileID + '","cert":"' + certData + '","outFileType":0,"sealList":[{"sealID":"' + sealID1 + '","sealImage":"' + imageData + '","imageWidth":40,"imageHeight":40,"SealInfo":[{"pageIndex":0,"x":0.1,"y":0.1,"pageCount":10,"posY":0.2},{"pageIndex":1,"x":0.5,"y":0.5,"pageCount":10,"posY":0.3}]},{"sealID":"' + sealID2 + '","sealImage":"' + imageData + '","imageWidth":40,"imageHeight":40,"SealInfo":[{"pageIndex":2,"x":0.9,"y":0.9,"pageCount":10,"posY":0.4},{"pageIndex":4,"x":0.8,"y":0.8,"pageCount":10,"posY":0.5}]}]}'
+	function AddCrossSignatures(){
+		var msg = '{"function":"AddCrossSignature","fileName":"'+pdfFileName+'","fileID":"'+fileID+'","cert":"'+certData+'","outFileType":0,"sealList":[{"sealID":"'+sealID1+'","sealImage":"'+imageData+'","imageWidth":40,"imageHeight":40,"SealInfo":[{"pageIndex":0,"x":0.1,"y":0.1,"pageCount":10,"posY":0.2},{"pageIndex":1,"x":0.5,"y":0.5,"pageCount":10,"posY":0.3}]},{"sealID":"'+sealID2+'","sealImage":"'+imageData+'","imageWidth":40,"imageHeight":40,"SealInfo":[{"pageIndex":2,"x":0.9,"y":0.9,"pageCount":10,"posY":0.4},{"pageIndex":4,"x":0.8,"y":0.8,"pageCount":10,"posY":0.5}]}]}'
 		$.ajax({
 			method: 'post',
-			url: 'http://127.0.0.1:10080/GomainClent/AddCrossSignature',
+			url: 'http://127.0.0.1:9999/GomainClient/AddCrossSignature',
 			data: msg,
-			cache: false,
-			success: function (data) {
+			cache:false,
+			success:function(data){
 				setMessageInnerHTML(data);
 			},
-			error: function (error) {
+			error:function(error) {
 				setMessageInnerHTML(data);
 			}
 		});
 	}
 	//5.7.	外来公钥加密+私钥解密
-	function ExpPubEncrypt() {
-		var msg = '{"function":"ExtECCEncrypt","devID":"' + devID + '","publicKey":"' + encPubData + '","plainData":"1234567890abcd"}';
-		websocket.send(msg);
-		websocket.onmessage = function (event) {
+	function ExpPubEncrypt(){
+		var msg = '{"function":"ExtECCEncrypt","devID":"'+devID+'","publicKey":"'+encPubData+'","plainData":"1234567890abcd"}';
+        websocket.send(msg);
+        websocket.onmessage = function (event){
 			setMessageInnerHTML(event.data);
-			if (JSON.parse(event.data).result == 0) {
+			if(JSON.parse(event.data).result==0){
 				var cipherData = JSON.parse(event.data).encryptedData;
 				//5.8.	私钥解密
-				msg = '{"function":"ECCDecrypt","devID":"' + devID + '","encryptedData":"' + cipherData + '","isEncode":0}';
+				msg = '{"function":"ECCDecrypt","devID":"'+devID+'","encryptedData":"'+cipherData+'","isEncode":0}';
 				websocket.send(msg);
-				websocket.onmessage = function (event1) {
+				websocket.onmessage = function (event1)
+				{
 					setMessageInnerHTML(event1.data);
 				}
 			}
 			else alert("签名失败");
 		}
-	}
+    }
 
 	//5.4.	数字签名128
-	function SignData() {
-		if (signPub == "") {
+	function SignData()
+	{
+		if(signPub=="")
+		{
 			alert("请先导出签名密钥");
-			return;
+	      	return;
 		}
+		
+		var msg = '{"function":"ECCSign","devID":"'+devID+'","inData":"1234567890abcd"}';
+        websocket.send(msg);
 
-		var msg = '{"function":"ECCSign","devID":"' + devID + '","inData":"1234567890abcd"}';
-		websocket.send(msg);
-
-		websocket.onmessage = function (event) {
+		websocket.onmessage = function (event)
+		 {
 			setMessageInnerHTML(event.data);
-			if (JSON.parse(event.data).result == 0) {
-				var signedData = JSON.parse(event.data).signedData;
-				//5.6.	外部公钥验证签名
-				msg = '{"function":"ECCVerify","devID":"' + devID + '","publicKey":"' + signPub + '","inData":"1234567890abcd","signedData":"' + signedData + '"}';
-				websocket.send(msg);
-				websocket.onmessage = function (event1) {
-					setMessageInnerHTML(event1.data);
-				}
-			}
+			 if(JSON.parse(event.data).result==0)
+			 {
+					 var signedData = JSON.parse(event.data).signedData;
+					 //5.6.	外部公钥验证签名
+					 msg = '{"function":"ECCVerify","devID":"'+devID+'","publicKey":"'+signPub+'","inData":"1234567890abcd","signedData":"'+signedData+'"}';
+					 websocket.send(msg);
+					 websocket.onmessage = function (event1)
+					 {
+						setMessageInnerHTML(event1.data);
+					 }
+			 }
 			else alert("签名失败");
-		}
+	   }
 	}
 	//5.4.	数字签名,64byte2输出
-	function SignData1() {
-		if (signPub == "") {
+	function SignData1()
+	{
+		if(signPub=="")
+		{
 			alert("请先导出签名密钥");
-			return;
+	      	return;
 		}
+	
+		var msg = '{"function":"ECCSign","devID":"'+devID+'","inData":"1234567890abcd","flag":1}';
+        websocket.send(msg);
 
-		var msg = '{"function":"ECCSign","devID":"' + devID + '","inData":"1234567890abcd","flag":1}';
-		websocket.send(msg);
-
-		websocket.onmessage = function (event) {
+		websocket.onmessage = function (event)
+		 {
 			setMessageInnerHTML(event.data);
-			if (JSON.parse(event.data).result == 0) {
-				var signedData = JSON.parse(event.data).signedData;
-				//5.6.	外部公钥验证签名
-				msg = '{"function":"ECCVerify","devID":"' + devID + '","publicKey":"' + signPub + '","inData":"1234567890abcd","signedData":"' + signedData + '"}';
-				websocket.send(msg);
-				websocket.onmessage = function (event1) {
-					setMessageInnerHTML(event1.data);
-				}
-			}
+			 if(JSON.parse(event.data).result==0)
+			 {
+					 var signedData = JSON.parse(event.data).signedData;
+					 //5.6.	外部公钥验证签名
+					 msg = '{"function":"ECCVerify","devID":"'+devID+'","publicKey":"'+signPub+'","inData":"1234567890abcd","signedData":"'+signedData+'"}';
+					 websocket.send(msg);
+					 websocket.onmessage = function (event1)
+					 {
+						setMessageInnerHTML(event1.data);
+					 }
+			 }
 			else alert("签名失败");
-		}
+	   }
 	}
 
-	function SignData2() {
-		if (signPub == "") {
+ function SignData2()
+	{
+		if(signPub=="")
+		{
 			alert("请先导出签名密钥");
-			return;
+	    return;
 		}
+	
+		var msg = '{"function":"ECCSign","devID":"'+devID+'","inData":"1234567890abcd","flag":2}';
+        websocket.send(msg);
 
-		var msg = '{"function":"ECCSign","devID":"' + devID + '","inData":"1234567890abcd","flag":2}';
-		websocket.send(msg);
-
-		websocket.onmessage = function (event) {
+		websocket.onmessage = function (event)
+		 {
 			setMessageInnerHTML(event.data);
-			if (JSON.parse(event.data).result == 0) {
-				var signedData = JSON.parse(event.data).signedData;
-				//5.6.	外部公钥验证签名
-				msg = '{"function":"ECCVerify","devID":"' + devID + '","publicKey":"' + signPub + '","inData":"1234567890abcd","signedData":"' + signedData + '"}';
-				websocket.send(msg);
-				websocket.onmessage = function (event1) {
-					setMessageInnerHTML(event1.data);
-				}
-			}
+			 if(JSON.parse(event.data).result==0)
+			 {
+					 var signedData = JSON.parse(event.data).signedData;
+					 //5.6.	外部公钥验证签名
+					 msg = '{"function":"ECCVerify","devID":"'+devID+'","publicKey":"'+signPub+'","inData":"1234567890abcd","signedData":"'+signedData+'"}';
+					 websocket.send(msg);
+					 websocket.onmessage = function (event1)
+					 {
+						setMessageInnerHTML(event1.data);
+					 }
+			 }
 			else alert("签名失败");
-		}
+	   }
 	}
-
-	function SignData3() {
-		if (signPub == "") {
+	
+	function SignData3()
+	{
+		if(signPub=="")
+		{
 			alert("请先导出签名密钥");
-			return;
+	      	return;
 		}
+	
+		var msg = '{"function":"ECCSign","devID":"'+devID+'","inData":"1234567890abcd","flag":3}';
+        websocket.send(msg);
 
-		var msg = '{"function":"ECCSign","devID":"' + devID + '","inData":"1234567890abcd","flag":3}';
-		websocket.send(msg);
-
-		websocket.onmessage = function (event) {
+		websocket.onmessage = function (event)
+		 {
 			setMessageInnerHTML(event.data);
-			if (JSON.parse(event.data).result == 0) {
-				var signedData = JSON.parse(event.data).signedData;
-				//5.6.	外部公钥验证签名
-				msg = '{"function":"ECCVerify","devID":"' + devID + '","publicKey":"' + signPub + '","inData":"1234567890abcd","signedData":"' + signedData + '"}';
-				websocket.send(msg);
-				websocket.onmessage = function (event1) {
-					setMessageInnerHTML(event1.data);
-				}
-			}
+			 if(JSON.parse(event.data).result==0)
+			 {
+					 var signedData = JSON.parse(event.data).signedData;
+					 //5.6.	外部公钥验证签名
+					 msg = '{"function":"ECCVerify","devID":"'+devID+'","publicKey":"'+signPub+'","inData":"1234567890abcd","signedData":"'+signedData+'"}';
+					 websocket.send(msg);
+					 websocket.onmessage = function (event1)
+					 {
+						setMessageInnerHTML(event1.data);
+					 }
+			 }
 			else alert("签名失败");
-		}
+	   }
 	}
-	//5.7.	外来公钥加密 + 5.9.	私钥解密
-	function EXPPUKEncryptEx() {
-		var msg = '{"function":"ExtECCEncrypt","devID":"' + devID + '","publicKey":"' + encPubData + '","plainData":"1234567890abcd"}';
-		websocket.send(msg);
-		websocket.onmessage = function (event) {
+    //5.7.	外来公钥加密 + 5.9.	私钥解密
+	function EXPPUKEncryptEx(){
+		var msg = '{"function":"ExtECCEncrypt","devID":"'+devID+'","publicKey":"'+encPubData+'","plainData":"1234567890abcd"}';
+        websocket.send(msg);
+        websocket.onmessage = function (event)
+		{
 			setMessageInnerHTML(event.data);
-			if (JSON.parse(event.data).result == 0) {
+			if(JSON.parse(event.data).result==0)
+			{
 				var cipherData = JSON.parse(event.data).encryptedData;
 				//5.9.	私钥解密
-				msg = '{"function":"ECCDecryptEX","devID":"' + devID + '","encryptedData":"' + cipherData + '","flag":111}';
+				msg = '{"function":"ECCDecryptEX","devID":"'+devID+'","encryptedData":"'+cipherData+'","flag":111}';
 				websocket.send(msg);
-				websocket.onmessage = function (event1) {
+				websocket.onmessage = function (event1)
+				{
 					setMessageInnerHTML(event1.data);
 				}
 			}
 			else
 				alert("签名失败");
-		}
-	}
+	   }
+    }
 
 	//6.1.	对称加密(SM1)对称解密(SM1)
-	function SymcEncrypt() {
-		var msg = '{"function":"ECCSymcEncrypt","devID":"' + devID + '","symcAlgorithm":257,"ulAlgId":1,"PubKey":"' + encPubData + '","plainData":"1234567890abcd","isEncode":0}';
+	function SymcEncrypt(){
+		var msg = '{"function":"ECCSymcEncrypt","devID":"'+devID+'","symcAlgorithm":257,"ulAlgId":1,"PubKey":"'+encPubData+'","plainData":"1234567890abcd","isEncode":0}';
 		websocket.send(msg);
-		websocket.onmessage = function (event) {
+		websocket.onmessage = function (event)
+		{
 			setMessageInnerHTML(event.data);
-			if (JSON.parse(event.data).result == 0) {
+			if(JSON.parse(event.data).result==0)
+			{
 				var encryptedData = JSON.parse(event.data).encryptedData;
 				var encryptedKey = JSON.parse(event.data).encryptedKey;
-				msg = '{"function":"ECCSymcDecrypt","devID":"' + devID + '","symcAlgorithm":257,"encryptedData":"' + encryptedData + '","encryptedKey":"' + encryptedKey + '","isEncode":0}';
+				msg = '{"function":"ECCSymcDecrypt","devID":"'+devID+'","symcAlgorithm":257,"encryptedData":"'+encryptedData+'","encryptedKey":"'+encryptedKey+'","isEncode":0}';
 				websocket.send(msg);
-				websocket.onmessage = function (event1) {
+				websocket.onmessage = function (event1)
+				{
 					setMessageInnerHTML(event1.data);
 				}
 			}
 		}
 	}
 
-	function SymcEncrypt1() {
-		if (encPubData == "") {
+	function SymcEncrypt1()
+	{
+		if(encPubData==""){
 			alert("请先导出加密密钥");
 			return;
 		}
-
-		var msg = '{"function":"ECCSymcEncrypt","devID":"' + devID + '","publicKey":"' + encPubData + '","symcAlgorithm":1,"ulAlgId":2,"plainData":"1234567890abcd"}';
-		websocket.send(msg);
-		websocket.onmessage = function (event) {
+		
+		var msg = '{"function":"ECCSymcEncrypt","devID":"'+devID+'","publicKey":"'+encPubData+'","symcAlgorithm":1,"ulAlgId":2,"plainData":"1234567890abcd"}';
+        websocket.send(msg);
+        websocket.onmessage = function (event){
 			setMessageInnerHTML(event.data);
-			if (JSON.parse(event.data).result == 0) {
+			if(JSON.parse(event.data).result==0){
 				var encryptedData = JSON.parse(event.data).encryptedData;
 				var encryptedKey = JSON.parse(event.data).encryptedKey;
 				//5.8.	对称解密
-				msg = '{"function":"ECCSymcDecrypt","devID":"' + devID + '","encryptedKey":"' + encryptedKey + '","encryptedData":"' + encryptedData + '","symcAlgorithm":1,"isEncode":0}';
+				msg = '{"function":"ECCSymcDecrypt","devID":"'+devID+'","encryptedKey":"'+encryptedKey+'","encryptedData":"'+encryptedData+'","symcAlgorithm":1,"isEncode":0}';
 				websocket.send(msg);
-				websocket.onmessage = function (event1) {
+				websocket.onmessage = function (event1)
+				{
 					setMessageInnerHTML(event1.data);
 				}
 			}
@@ -998,22 +994,25 @@
 		}
 	}
 
-	function SymcEncrypt2() {
-		if (encPubData == "") {
+	function SymcEncrypt2()
+	{
+		if(encPubData=="")
+		{
 			alert("请先导出加密密钥");
 			return;
 		}
-		var msg = '{"function":"ECCSymcEncrypt","devID":"' + devID + '","publicKey":"' + encPubData + '","symcAlgorithm":2,"ulAlgId":2,"plainData":"1234567890abcd"}';
-		websocket.send(msg);
-		websocket.onmessage = function (event) {
+		var msg = '{"function":"ECCSymcEncrypt","devID":"'+devID+'","publicKey":"'+encPubData+'","symcAlgorithm":2,"ulAlgId":2,"plainData":"1234567890abcd"}';
+        websocket.send(msg);
+        websocket.onmessage = function (event){
 			setMessageInnerHTML(event.data);
-			if (JSON.parse(event.data).result == 0) {
+			if(JSON.parse(event.data).result==0){
 				var encryptedData = JSON.parse(event.data).encryptedData;
 				var encryptedKey = JSON.parse(event.data).encryptedKey;
 				//5.8.	对称解密
-				msg = '{"function":"ECCSymcDecrypt","devID":"' + devID + '","encryptedKey":"' + encryptedKey + '","encryptedData":"' + encryptedData + '","symcAlgorithm":2,"isEncode":0}';
+				msg = '{"function":"ECCSymcDecrypt","devID":"'+devID+'","encryptedKey":"'+encryptedKey+'","encryptedData":"'+encryptedData+'","symcAlgorithm":2,"isEncode":0}';
 				websocket.send(msg);
-				websocket.onmessage = function (event1) {
+				websocket.onmessage = function (event1)
+				{
 					setMessageInnerHTML(event1.data);
 				}
 			}
@@ -1021,27 +1020,31 @@
 		}
 	}
 
-	function SymcEncrypt3() {
-		if (encPubData == "") {
+	function SymcEncrypt3()
+	{
+	    if(encPubData=="")
+		{
 			alert("请先导出加密密钥");
 			return;
 		}
 
-		if (encPubData == "") {
+		if(encPubData=="")
+		{
 			alert("请先导出加密密钥");
 			return;
 		}
-		var msg = '{"function":"ECCSymcEncrypt","devID":"' + devID + '","publicKey":"' + encPubData + '","symcAlgorithm":3,"ulAlgId":2,"plainData":"1234567890abcd"}';
-		websocket.send(msg);
-		websocket.onmessage = function (event) {
+		var msg = '{"function":"ECCSymcEncrypt","devID":"'+devID+'","publicKey":"'+encPubData+'","symcAlgorithm":3,"ulAlgId":2,"plainData":"1234567890abcd"}';
+        websocket.send(msg);
+        websocket.onmessage = function (event){
 			setMessageInnerHTML(event.data);
-			if (JSON.parse(event.data).result == 0) {
+			if(JSON.parse(event.data).result==0){
 				var encryptedData = JSON.parse(event.data).encryptedData;
 				var encryptedKey = JSON.parse(event.data).encryptedKey;
 				//5.8.	对称解密
-				msg = '{"function":"ECCSymcDecrypt","devID":"' + devID + '","encryptedKey":"' + encryptedKey + '","encryptedData":"' + encryptedData + '","symcAlgorithm":3,"isEncode":0}';
+				msg = '{"function":"ECCSymcDecrypt","devID":"'+devID+'","encryptedKey":"'+encryptedKey+'","encryptedData":"'+encryptedData+'","symcAlgorithm":3,"isEncode":0}';
 				websocket.send(msg);
-				websocket.onmessage = function (event1) {
+				websocket.onmessage = function (event1)
+				{
 					setMessageInnerHTML(event1.data);
 				}
 			}
@@ -1049,44 +1052,50 @@
 		}
 	}
 
-	function SymcEncrypt4() {
-		if (encPubData == "") {
+	function SymcEncrypt4()
+	{
+	   if(encPubData=="")
+		{
 			alert("请先导出加密密钥");
 			return;
 		}
-
-		if (encPubData == "") {
+	
+		if(encPubData=="")
+		{
 			alert("请先导出加密密钥");
 			return;
 		}
-		var msg = '{"function":"ECCSymcEncrypt","devID":"' + devID + '","publicKey":"' + encPubData + '","symcAlgorithm":4,"ulAlgId":2,"plainData":"1234567890abcd"}';
-		websocket.send(msg);
-		websocket.onmessage = function (event) {
+		var msg = '{"function":"ECCSymcEncrypt","devID":"'+devID+'","publicKey":"'+encPubData+'","symcAlgorithm":4,"ulAlgId":2,"plainData":"1234567890abcd"}';
+        websocket.send(msg);
+        websocket.onmessage = function (event){
 			setMessageInnerHTML(event.data);
-			if (JSON.parse(event.data).result == 0) {
+			if(JSON.parse(event.data).result==0){
 				var encryptedData = JSON.parse(event.data).encryptedData;
 				var encryptedKey = JSON.parse(event.data).encryptedKey;
 				//5.8.	对称解密
-				msg = '{"function":"ECCSymcDecrypt","devID":"' + devID + '","encryptedKey":"' + encryptedKey + '","encryptedData":"' + encryptedData + '","symcAlgorithm":4,"isEncode":0}';
+				msg = '{"function":"ECCSymcDecrypt","devID":"'+devID+'","encryptedKey":"'+encryptedKey+'","encryptedData":"'+encryptedData+'","symcAlgorithm":4,"isEncode":0}';
 				websocket.send(msg);
-				websocket.onmessage = function (event1) {
+				websocket.onmessage = function (event1)
+				{
 					setMessageInnerHTML(event1.data);
 				}
 			}
 			else alert("对称加密失败");
 		}
 	}
-
-	function SymcEncryptEX() {
-		if (encPubData == "") {
+	
+	function SymcEncryptEX()
+	{		
+	    if(encPubData=="")
+		{
 			alert("请先导出加密密钥");
-			return;
-		}
-
+	      	return;
+		}	
+		
 		/*if(encPubData=="")
 		{
 			alert("请先导出加密密钥");
-					return;
+	      	return;
 		}*/
 		/*var f = document.getElementById('textFile').value;
 		if(f == "")
@@ -1094,92 +1103,95 @@
 			alert("请先输入文件名称");
 			return;
 		}*/
-		var msg1 = '{"function":"ReadFile","devID":"' + devID + '","fileName":"encFile"}';
+		var msg1 = '{"function":"ReadFile","devID":"'+devID+'","fileName":"encFile"}';		
 		websocket.send(msg1);
-		websocket.onmessage = function (event) {
+		websocket.onmessage = function (event)
+		{		
 			setMessageInnerHTML(event.data);
-			if (JSON.parse(event.data).result == 0) {
+			if(JSON.parse(event.data).result==0)
+			{
 				var enc_file = JSON.parse(event.data).fileData;
-
-				var msg2 = '{"function":"ReadFile","devID":"' + devID + '","fileName":"dataSymKeyEnc"}';
+				
+				var msg2 = '{"function":"ReadFile","devID":"'+devID+'","fileName":"dataSymKeyEnc"}';
 				websocket.send(msg2);
-				websocket.onmessage = function (event) {
+				websocket.onmessage = function(event)
+				{
 					setMessageInnerHTML(event.data);
 					var data_SymKeyEnc = JSON.parse(event.data).fileData;
-					var msg = '{"function":"ECCSymcEncryptEX","devID":"' + devID + '","encFile":"' + enc_file + '","dataSymKeyEnc":"' + data_SymKeyEnc + '"}';
+					var msg = '{"function":"ECCSymcEncryptEX","devID":"'+devID+'","encFile":"'+enc_file+'","dataSymKeyEnc":"' + data_SymKeyEnc + '"}';
 					websocket.send(msg);
-					websocket.onmessage = function (event) {
-						setMessageInnerHTML(event.data);
-					}
-
+					websocket.onmessage = function (event){		
+					setMessageInnerHTML(event.data);
+				}
+				
 				}
 			}
 		}
-
+			
 	}
-
+	
 	var sealData = undefined;
 	//取签章信息
 	function GetSignInfo() {
-		var msg = '{"function":"WS_GetSignInfo"}';
-		//*
-		websocket.onmessage = function (event) {
-			setMessageInnerHTML(event.data);
-			console.log(JSON.parse(event.data));
-			WSSign();
-		}
-		// */
-		websocket.send(msg);
+	    var msg = '{"function":"WS_GetSignInfo"}';
+	    //*
+	    websocket.onmessage = function (event){		
+				setMessageInnerHTML(event.data);
+				console.log(JSON.parse(event.data));
+				WSSign();
+			}
+			// */
+	    websocket.send(msg);
 	}
 	//取印章数据
 	function GetSealData() {
-		var msg = '{"function":"WS_GetSealData"}';
-		//*
-		websocket.onmessage = function (event) {
-			setMessageInnerHTML(event.data);
-			var result = JSON.parse(event.data)
-			console.log(result);
-			sealData = result.sealData;
-			GetSignInfo();
-		}
-		// */
-		websocket.send(msg);
+	    var msg = '{"function":"WS_GetSealData"}';
+	    //*
+    	websocket.onmessage = function (event){		
+				setMessageInnerHTML(event.data);
+				var result = JSON.parse(event.data) 
+				console.log(result);
+				sealData = result.sealData;
+				GetSignInfo();
+			}
+			// */
+	    websocket.send(msg);
 	}
 	//取印章信息
 	function GetSealInfo() {
-		var msg = '{"function":"WS_GetSealImage"}';
-		//alert(msg);
-		websocket.send(msg);
+	    var msg = '{"function":"WS_GetSealImage"}';
+	    //alert(msg);
+	    websocket.send(msg);
 	}
 	function WSSign() {
-		var msg = '{"function":"WS_Sign","DocProperty":"Signvalue.xml","DigestData":"ATzYqjsoPHSWZ8sIp3luQZuTP2cmmbt4VIuS1BWVeU4=","SignMethod":"1.501","DigestMethod":"SGD_SM3","SignDataTime":"20190829140050Z"}';
-		//msg = '{"function":"ECCSymcDecrypt","devID":"' + devID + '","encryptedKey":"' + encryptedKey + '","encryptedData":"' + encryptedData + '","symcAlgorithm":4,"isEncode":0}';
-		//alert(msg);
-		//*
-		websocket.onmessage = function (event) {
-			setMessageInnerHTML(event.data);
-			var signResult = JSON.parse(event.data);
-			console.log(signResult);
-			var verifyParam = {
-				'function': "WS_Verify",
-				'SealData': sealData,
-				'SignValue': signResult.SignValue,
-				'DocProperty': "Signature.xml",
-				'DigestData': "ATzYqjsoPHSWZ8sIp3luQZuTP2cmmbt4VIuS1BWVeU4=",
-				'SignMethod': "1.501",
-				'SignDataTime': '20190829140050Z'
-			}
-
-			websocket.onmessage = function (event) {
+	    var msg = '{"function":"WS_Sign","DocProperty":"Signvalue.xml","DigestData":"ATzYqjsoPHSWZ8sIp3luQZuTP2cmmbt4VIuS1BWVeU4=","SignMethod":"1.501","DigestMethod":"SGD_SM3","SignDataTime":"20190829140050Z"}';
+	    //msg = '{"function":"ECCSymcDecrypt","devID":"' + devID + '","encryptedKey":"' + encryptedKey + '","encryptedData":"' + encryptedData + '","symcAlgorithm":4,"isEncode":0}';
+	    //alert(msg);
+	    //*
+	    websocket.onmessage = function (event){		
 				setMessageInnerHTML(event.data);
 				var signResult = JSON.parse(event.data);
 				console.log(signResult);
+				var verifyParam = {
+					'function': "WS_Verify",
+					'SealData': sealData,
+					'SignValue': signResult.SignValue,
+					'DocProperty': "Signature.xml",
+					'DigestData': "ATzYqjsoPHSWZ8sIp3luQZuTP2cmmbt4VIuS1BWVeU4=",
+					'SignMethod': "1.501",
+					'SignDataTime': '20190829140050Z'
+				}
+				
+				websocket.onmessage = function(event) {
+					setMessageInnerHTML(event.data);
+					var signResult = JSON.parse(event.data);	
+					console.log(signResult);
+				}
+				
+				websocket.send(JSON.stringify(verifyParam));
 			}
-
-			websocket.send(JSON.stringify(verifyParam));
-		}
-		// */
-		websocket.send(msg);
+			// */
+	    websocket.send(msg);
 	}
 
 </script>
